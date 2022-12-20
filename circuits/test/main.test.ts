@@ -3,15 +3,12 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 // eslint-disable-next-line node/no-extraneous-import
-import { ZKPClient, EdDSA } from "circuits";
+import { ZKPClient } from "circuits";
 import fs from "fs";
 import path from "path";
 
 describe("Test zkp circuit and scripts", function () {
-  const privKey =
-    "0xABCDEF12ABCDEF12ABCDEF12ABCDEF12ABCDEF12ABCDEF12ABCDEF12ABCDEF12";
   let client: ZKPClient;
-  let eddsa: EdDSA;
   beforeEach(async () => {
     const wasm = fs.readFileSync(
       path.join(__dirname, "../../circuits/zk/circuits/main_js/main.wasm")
@@ -20,22 +17,25 @@ describe("Test zkp circuit and scripts", function () {
       path.join(__dirname, "../../circuits/zk/zkeys/main.zkey")
     );
     client = await new ZKPClient().init(wasm, zkey);
-    eddsa = await new EdDSA(privKey).init();
   });
-  it("Should able to prove and verify the zkp", async function () {
-    const message = BigNumber.from(
-      "0xABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00"
-    );
-    const signature = await eddsa.sign(message);
-    expect(await eddsa.verify(message, signature, eddsa.pubKey)).to.eq(true);
+  it("Should able to prove 2*3 = 6", async function () {
     const proof = await client.prove({
-      M: message.toBigInt(),
-      Ax: eddsa.scalarPubKey[0],
-      Ay: eddsa.scalarPubKey[1],
-      S: signature.S,
-      R8x: eddsa.babyjub.F.toObject(signature.R8[0]),
-      R8y: eddsa.babyjub.F.toObject(signature.R8[1]),
+      a: BigNumber.from(2).toBigInt(),
+      b: BigNumber.from(3).toBigInt(),
+      c: BigNumber.from(6).toBigInt(),
     });
     expect(proof).not.to.eq(undefined);
+    console.log(proof);
   });
+  it("Should able to prove 2*4 = 8", async function () {
+    const proof = await client.prove({
+      a: BigNumber.from(2).toBigInt(),
+      b: BigNumber.from(4).toBigInt(),
+      c: BigNumber.from(8).toBigInt(),
+    });
+    expect(proof).not.to.eq(undefined);
+    console.log(proof);
+  });
+
+
 });
