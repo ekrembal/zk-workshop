@@ -1,25 +1,34 @@
 pragma circom 2.0.0;
-include "../../node_modules/circomlib/circuits/eddsaposeidon.circom";
 
-template Sample() {
-    // public
-    signal input M;
-    signal input Ax;
-    signal input Ay;
-    // private
-    signal input S;
-    signal input R8x;
-    signal input R8y;
+template IsZero() {
+    signal input in;
+    signal output out;
 
-    component verifier = EdDSAPoseidonVerifier();
+    signal inv;
 
-    verifier.enabled <== 1;
-    verifier.Ax <== Ax;
-    verifier.Ay <== Ay;
-    verifier.S <== S;
-    verifier.R8x <== R8x;
-    verifier.R8y <== R8y;
-    verifier.M <== M;
+    inv <-- in!=0 ? 1/in : 0;
+
+    out <== -in*inv +1;
+    in*out === 0;
 }
 
-component main { public [M, Ax, Ay] } = Sample();
+template Sample() {
+    // private
+    signal input a;
+    signal input b;
+    // private
+    signal input c;
+    component isAZero = IsZero();
+    component isBZero = IsZero();
+
+    isAZero.in <== a - 1;
+    isBZero.in <== b - 1;
+
+    isAZero.out === 0;
+    isBZero.out === 0;
+
+    c === a*b;
+
+}
+
+component main { public [c] } = Sample();
