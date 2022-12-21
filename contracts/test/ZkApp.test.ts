@@ -41,6 +41,15 @@ describe("Test ZKP contract", function () {
       )
     ).to.eq(true);
     console.log(proof);
+    // convert proof to tuple for solidity input
+
+    const proofTuple = [
+      [proof.a[0],proof.a[1]],
+      [[proof.b[0][0],proof.b[0][1]],[proof.b[1][0],proof.b[1][1]]],
+      [proof.c[0],proof.c[1]]
+    ];
+    // console.log(proofTuple);
+    console.log(JSON.stringify(proofTuple));
     await zkApp.safeMint(deployer.address, [8633], proof);
     expect(await zkApp.balanceOf(deployer.address)).to.eq(1);
   });
