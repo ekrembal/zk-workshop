@@ -7,7 +7,7 @@ import {
   ZkApp,
   ZkApp__factory,
 } from "../typechain";
-import { ZKPClient, EdDSA } from "circuits";
+import { ZKPClient } from "circuits";
 import { BigNumber } from "ethers";
 import fs from "fs";
 import path from "path";
@@ -17,14 +17,10 @@ describe("Test ZKP contract", function () {
   let zkApp: ZkApp;
   let deployer: SignerWithAddress;
   let client: ZKPClient;
-  let eddsa: EdDSA;
   this.beforeEach(async () => {
     [deployer] = await ethers.getSigners();
     verifier = await new Verifier__factory(deployer).deploy();
-    eddsa = await new EdDSA(
-      "0xABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD"
-    ).init();
-    zkApp = await new ZkApp__factory(deployer).deploy(verifier.address);
+    zkApp = await new ZkApp__factory(deployer).deploy(verifier.address, 8633);
     client = await new ZKPClient().init(
       fs.readFileSync(
         path.join(__dirname, "../../circuits/zk/circuits/main_js/main.wasm")
@@ -33,21 +29,19 @@ describe("Test ZKP contract", function () {
     );
   });
   it("Should able to create a zkp and verify them", async function () {
-    const msg = BigNumber.from("0xabcd");
-    const signature = await eddsa.sign(msg);
     const proof = await client.prove({
-      M: msg.toBigInt(),
-      Ax: eddsa.scalarPubKey[0],
-      Ay: eddsa.scalarPubKey[1],
-      S: signature.S,
-      R8x: eddsa.babyjub.F.toObject(signature.R8[0]),
-      R8y: eddsa.babyjub.F.toObject(signature.R8[1]),
+      a: BigNumber.from(89).toBigInt(),
+      b: BigNumber.from(97).toBigInt(),
+      c: BigNumber.from(8633).toBigInt(),
     });
     expect(
       await zkApp.verify(
-        [msg, eddsa.scalarPubKey[0], eddsa.scalarPubKey[1]],
+        [BigNumber.from(8633).toBigInt()],
         proof
       )
     ).to.eq(true);
+    console.log(proof);
+    await zkApp.safeMint(deployer.address, [8633], proof);
+    expect(await zkApp.balanceOf(deployer.address)).to.eq(1);
   });
 });
