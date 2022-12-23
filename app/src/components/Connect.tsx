@@ -20,25 +20,19 @@ function Connect() {
   const { activateBrowserWallet, deactivate, chainId } = useEthers();
   const { activateWalletConnect } = useWalletConnect();
   return (
-    <div>
-      Chain ID: {chainId}<br/>
-      {chainId ? (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md flex flex-col border p-4 justify-center text-center gap-y-4">
+      <h2 className="text-xl">Step 1. Connect your wallet</h2>
+      {chainId && <p className="text-xl">Chain ID: {chainId}</p>}
+      {chainId ? (chainId!=5&&
         <>
-          <button onClick={() => switchNetwork(4)}>Rinkeby</button>
-          <button onClick={() => switchNetwork(5)}>Goerli</button>
-          <button onClick={() => alert('Select localhost using metamask')}>Localhost</button>
-          <br />
-          <button onClick={deactivate}>
-            Disconnect(works only for walletconnect)
-          </button>
+          <button type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onClick={() => switchNetwork(5)}>Switch to Goerli</button>
         </>
       ) : (
-        <>
-          <button onClick={activateBrowserWallet}>Connect metamask</button>
-          <button onClick={activateWalletConnect}>Connect walletconnect</button>
-        </>
+        <div className="flex flex-row gap-x-4 justify-center">
+          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={activateBrowserWallet}>Connect metamask</button>
+          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={activateWalletConnect}>Connect walletconnect</button>
+        </div>
       )}
-      <br />
     </div>
   );
 }
