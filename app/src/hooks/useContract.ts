@@ -34,31 +34,6 @@ export const useVerifier = (address: string) => {
   return verifier;
 };
 
-/**
- * @dev This fetches data every block when the component is mounted
- */
-export const useTotalRecords = (address: string) => {
-  const zkApp = useZKApp(address);
-  const [totalRecords, setTotalRecords] = useState<BigNumber>();
-  const { library, chainId } = useEthers();
-
-  const fetchTotalRecords = useCallback(async () => {
-    if (!zkApp) return;
-    const _totalRecords = await zkApp.totalRecords();
-    setTotalRecords(_totalRecords);
-  }, [zkApp]);
-
-  useEffect(() => {
-    fetchTotalRecords();
-    library?.on("block", fetchTotalRecords);
-    return () => {
-      library?.off("block", fetchTotalRecords);
-    };
-  }, [address, library, chainId, fetchTotalRecords]);
-
-  return totalRecords;
-};
-
 export enum TxState {
   NONE = "NONE",
   PENDING = "PENDING",
@@ -80,7 +55,7 @@ export const useRecord = (address: string) => {
       publicSignals,
       proof,
     }: {
-      publicSignals: [BigNumberish, BigNumberish, BigNumberish];
+      publicSignals: [BigNumberish];
       proof: {
         a: [BigNumberish, BigNumberish];
         b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]];
@@ -92,7 +67,7 @@ export const useRecord = (address: string) => {
       const signer = library.getSigner(account);
       zkApp
         .connect(signer)
-        .record(publicSignals, proof)
+        .safeMint(signer._address, publicSignals, proof)
         .then((tx) => {
           setTxState(TxState.PENDING);
           tx.wait()

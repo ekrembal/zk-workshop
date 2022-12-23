@@ -55,7 +55,7 @@ contract ZkApp is ERC721, Ownable {
         return result;
     }
 
-    function safeMint(address to, uint256[1] memory publicSignals, Proof memory proof) public onlyOwner {
+    function safeMint(address to, uint256[1] memory publicSignals, Proof memory proof) public {
         require(publicSignals[0] == c, "ZkApp: The proof is not valid");
         require(verify(publicSignals, proof), "ZkApp: The proof is not valid");
         uint256 tokenId = _tokenIdCounter.current();

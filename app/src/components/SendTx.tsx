@@ -7,7 +7,7 @@ function SendTx({
   proof,
 }: {
   address: string;
-  publicSignals?: [bigint, bigint, bigint];
+  publicSignals?: [bigint];
   proof?: Proof;
 }) {
   const { txState, record } = useRecord(address);

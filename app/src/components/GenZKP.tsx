@@ -1,37 +1,31 @@
 import { Proof } from "circuits";
-import { EdDSASignature } from "circuits/src/eddsa";
 import useCircuit from "../hooks/useCircuit";
 
 function GenZKP({
-  signature,
-  message,
-  pubKey,
+  a,
+  b,
+  c,
   onResult,
 }: {
-  message: bigint;
-  pubKey?: [bigint, bigint];
-  signature?: EdDSASignature;
+  a:bigint|undefined,
+  b:bigint|undefined,
+  c:bigint|undefined,
   onResult: (proof: Proof) => void;
 }) {
   const { client } = useCircuit();
   return (
     <div>
       <button
-        disabled={!client || !pubKey || !signature}
+        disabled={!client || !a || !b || !c}
         onClick={async () => {
+          alert("Generating proof...");
           if (!client) alert("Client is not ready");
-          else if (!pubKey) alert("EdDSA pubkey is not ready");
-          else if (!signature) alert("EdDSA signature is not ready");
+          else if (!a) alert("a pubkey is not ready");
+          else if (!b) alert("b is not ready");
+          else if (!c) alert("c is not ready");
           else {
             client
-              .prove({
-                M: message,
-                Ax: pubKey[0],
-                Ay: pubKey[1],
-                S: signature.S,
-                R8x: client.babyjub.F.toObject(signature.R8[0]),
-                R8y: client.babyjub.F.toObject(signature.R8[1]),
-              })
+              .prove({a,b,c})
               .then(onResult);
           }
         }}
