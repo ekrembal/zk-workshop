@@ -1,4 +1,4 @@
-# Zk app boilerplate
+# 	Developing ZK Circuits with Circom
 
 ## Pre requisites
 
