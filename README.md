@@ -19,8 +19,9 @@
     yarn build
     ```
 4. Enter your private key in `contracts/.env` file.
-    ```shell
-    yarn demo
+    ```env
+    GOERLI_URL=https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161
+    PRIVATE_KEY=0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1
     ```
 5. Deploy the contracts
     ```shell
