@@ -8,7 +8,7 @@
 
 1. Clone or fork this template repository.
     ```shell
-    git clone https://github.com/wanseob/zkp-app-boilerplate
+    git clone https://github.com/ekrembal/zk-workshop
     ```
 2. Install packages
     ```shell
@@ -18,10 +18,15 @@
     ```shell
     yarn build
     ```
-4. Run a demo app using a localhost private network.
+4. Enter your private key in `contracts/.env` file.
     ```shell
     yarn demo
     ```
+5. Deploy the contracts
+    ```shell
+    yarn workspace contracts hardhat run --network goerli scripts/deploy.ts
+    ```
+6. Interact with the frontend  from https://zk.ekrembal.com
 
 ## Run tests
 1. Test contracts
@@ -38,10 +43,3 @@
     ```shell
     yarn workspace app test
     ```
-
-
-## Example: EdDSA signature rollup
-
-Let's compress EdDSA signatures into one zk proof! Go to [tutorial!](./TUTORIAL.md)
-
-To check the complete codes, visit the `tutorial` branch.
